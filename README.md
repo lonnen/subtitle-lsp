@@ -2,6 +2,10 @@
 
 subtitle-lsp is a [language server](https://microsoft.github.io/language-server-protocol/) for subtitle files.
 
+Currently supported formats:
+
+* [.srt](https://en.wikipedia.org/wiki/SubRip)
+
 ## License
 
 Licensed under either of
