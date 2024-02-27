@@ -1,7 +1,12 @@
 [package]
 name = "subtitle-lsp"
+description = "An LSP for subtitle files"
 version = "0.1.0"
+homepage = "https://github.com/lonnen/subtitle-lsp"
+authors = ["lonnen <chris.lonnen@gmail.com>"]
 edition = "2021"
+license = "MIT"
+readme = "README.md"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
