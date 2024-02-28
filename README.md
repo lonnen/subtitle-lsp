@@ -6,6 +6,14 @@ Currently supported formats:
 
 * [.srt](https://en.wikipedia.org/wiki/SubRip)
 
+Future supported formats:
+
+* [.vtt](https://developer.mozilla.org/en-US/docs/Web/API/WebVTT_API)
+* [.ttml](https://www.w3.org/AudioVideo/TT/docs/TTML-Profiles.html)
+* [.srv3](https://jacobstar.medium.com/the-first-complete-guide-to-youtube-captions-f886e06f7d9d)
+* .srv2
+* .srv1
+
 ## License
 
 Licensed under either of
