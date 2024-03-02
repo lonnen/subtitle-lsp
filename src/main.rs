@@ -13,7 +13,10 @@ struct Backend {
 impl LanguageServer for Backend {
     async fn initialize(&self, _: InitializeParams) -> Result<InitializeResult> {
         Ok(InitializeResult {
-            server_info: None,
+            server_info: Some(ServerInfo {
+                name: option_env!("CARGO_PKG_NAME").unwrap_or("subtitle-lsp").to_string(),
+                version: Some(option_env!("CARGO_PKG_VERSION").unwrap_or("").to_string()),
+            }),
             capabilities: ServerCapabilities {
                 ..ServerCapabilities::default()
             },
