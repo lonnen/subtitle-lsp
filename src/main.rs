@@ -1,12 +1,10 @@
-
-
 use tower_lsp::jsonrpc::Result;
 use tower_lsp::lsp_types::*;
 use tower_lsp::{Client, LanguageServer, LspService, Server};
 
 #[derive(Debug)]
 struct Backend {
-    client: Client,
+    client: Client
 }
 
 #[tower_lsp::async_trait]
@@ -32,6 +30,16 @@ impl LanguageServer for Backend {
     async fn shutdown(&self) -> Result<()> {
         Ok(())
     }
+
+    async fn did_open(&self, params: DidOpenTextDocumentParams) {
+        self.client.log_message(MessageType::INFO, "file opened").await;
+        self.on_change(TextDocumentItem {
+            uri: params.text_document.uri,
+            text: params.text_document.text,
+            version: params.text_document.version,
+            language_id: params.text_document.language_id,
+        }).await
+    }
 }
 
 #[tokio::main]
@@ -46,6 +54,5 @@ async fn main() {
     })
     .finish();
 
-    
     Server::new(stdin, stdout, socket).serve(service).await;
 }
