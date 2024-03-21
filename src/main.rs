@@ -42,6 +42,18 @@ impl LanguageServer for Backend {
     }
 }
 
+impl Backend {
+    async fn on_change(&self, params: TextDocumentItem) {
+        // make a rope from &params.text
+        // stick it into the document_map
+        // attempt to parse &params.text
+        //   package up any parse errors
+        //   send them back to the client
+        // update self.ast_map with whatever ast came back
+        // update semantic_token_map with whatever we got there
+    }
+}
+
 #[tokio::main]
 async fn main() {
     env_logger::init();
