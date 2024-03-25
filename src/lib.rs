@@ -20,7 +20,7 @@ pub struct Timecode {
 
 #[derive(Debug)]
 pub enum Token {
-    Index(usize),
+    Index(String),
     Timespan(Timespan),
     Timecode(Timecode),
     Text(String)
@@ -44,10 +44,24 @@ impl fmt::Display for Token {
 }
 
 fn lexer() -> impl Parser<char, Vec<(Token, Span)>, Error = Simple<char>> {
-    // parser for indexes
+    // A parser for indexes
+    let index = text::int(10)
+        .chain::<char, _, _>(just(',').chain(text::digits(10)).or_not().flatten())
+        .collect::<String>()
+        .map(Token::Index);
+
+    // A parser for timespans
+    // let timespan = ;
+    
     // parser for timecodes
-    // parser for timespans
+    // let timecode = ;
+    
     // parser for text
+    let text_ = just('"')
+        .ignore_then(filter(|c| *c != '"').repeated())
+        .then_ignore(just('"'))
+        .collect::<String>()
+        .map(Token::Text);
     
     let token = index
         .or(timespan)
