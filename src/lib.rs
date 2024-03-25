@@ -2,6 +2,8 @@ use core::fmt;
 
 use chumsky::prelude::*;
 
+pub type Span = std::ops::Range<usize>;
+
 #[derive(Debug)]
 pub struct Timespan {
     start: Timecode,
@@ -39,4 +41,21 @@ impl fmt::Display for Token {
             Token::Text(s) => write!(f, "{}", s),
         }
     }
+}
+
+fn lexer() -> impl Parser<char, Vec<(Token, Span)>, Error = Simple<char>> {
+    // parser for indexes
+    // parser for timecodes
+    // parser for timespans
+    // parser for text
+    
+    let token = index
+        .or(timespan)
+        .or(text_)
+        .recover_with(skip_then_retry_until([]));
+
+    token
+        .map_with_span(|tok, span|(tok, span))
+        .padded()
+        .repeated()
 }
