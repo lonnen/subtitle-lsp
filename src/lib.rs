@@ -7,7 +7,7 @@ pub type Span = std::ops::Range<usize>;
 #[derive(Debug)]
 pub struct Timespan {
     start: Timecode,
-    end: Timecode
+    end: Timecode,
 }
 
 #[derive(Debug)]
@@ -23,12 +23,16 @@ pub enum Token {
     Index(String),
     Timespan(Timespan),
     Timecode(Timecode),
-    Text(String)
+    Text(String),
 }
 
 impl fmt::Display for Timecode {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result { 
-        write!(f, "{}.{}.{},{}", self.hours, self.minutes, self.seconds, self.milliseconds)
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(
+            f,
+            "{}.{}.{},{}",
+            self.hours, self.minutes, self.seconds, self.milliseconds
+        )
     }
 }
 
@@ -52,24 +56,24 @@ fn lexer() -> impl Parser<char, Vec<(Token, Span)>, Error = Simple<char>> {
 
     // A parser for timespans
     // let timespan = ;
-    
+
     // parser for timecodes
     // let timecode = ;
-    
+
     // parser for text
     let text_ = just('"')
         .ignore_then(filter(|c| *c != '"').repeated())
         .then_ignore(just('"'))
         .collect::<String>()
         .map(Token::Text);
-    
+
     let token = index
         .or(timespan)
         .or(text_)
         .recover_with(skip_then_retry_until([]));
 
     token
-        .map_with_span(|tok, span|(tok, span))
+        .map_with_span(|tok, span| (tok, span))
         .padded()
         .repeated()
 }

@@ -4,7 +4,7 @@ use tower_lsp::{Client, LanguageServer, LspService, Server};
 
 #[derive(Debug)]
 struct Backend {
-    client: Client
+    client: Client,
 }
 
 #[tower_lsp::async_trait]
@@ -12,7 +12,9 @@ impl LanguageServer for Backend {
     async fn initialize(&self, _: InitializeParams) -> Result<InitializeResult> {
         Ok(InitializeResult {
             server_info: Some(ServerInfo {
-                name: option_env!("CARGO_PKG_NAME").unwrap_or("subtitle-lsp").to_string(),
+                name: option_env!("CARGO_PKG_NAME")
+                    .unwrap_or("subtitle-lsp")
+                    .to_string(),
                 version: Some(option_env!("CARGO_PKG_VERSION").unwrap_or("").to_string()),
             }),
             capabilities: ServerCapabilities {
@@ -32,13 +34,16 @@ impl LanguageServer for Backend {
     }
 
     async fn did_open(&self, params: DidOpenTextDocumentParams) {
-        self.client.log_message(MessageType::INFO, "file opened").await;
+        self.client
+            .log_message(MessageType::INFO, "file opened")
+            .await;
         self.on_change(TextDocumentItem {
             uri: params.text_document.uri,
             text: params.text_document.text,
             version: params.text_document.version,
             language_id: params.text_document.language_id,
-        }).await
+        })
+        .await
     }
 }
 
@@ -61,10 +66,7 @@ async fn main() {
     let stdin = tokio::io::stdin();
     let stdout = tokio::io::stdout();
 
-    let (service, socket) = LspService::build(|client| Backend {
-        client,
-    })
-    .finish();
+    let (service, socket) = LspService::build(|client| Backend { client }).finish();
 
     Server::new(stdin, stdout, socket).serve(service).await;
 }
