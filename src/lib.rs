@@ -24,6 +24,7 @@ pub enum Token {
     Timespan(Timespan),
     Timecode(Timecode),
     Text(String),
+    Delimeter,
 }
 
 impl fmt::Display for Timecode {
@@ -43,6 +44,7 @@ impl fmt::Display for Token {
             Token::Timespan(t) => write!(f, "{} --> {}", t.start, t.end),
             Token::Timecode(t) => write!(f, "{}", t),
             Token::Text(s) => write!(f, "{}", s),
+            Token::Delimeter => write!(f, "\n"),
         }
     }
 }
