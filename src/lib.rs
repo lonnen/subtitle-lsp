@@ -1,6 +1,6 @@
 use core::fmt;
 
-use chumsky::prelude::*;
+use chumsky::{prelude::*, text::newline};
 
 pub type Span = std::ops::Range<usize>;
 
@@ -68,6 +68,9 @@ fn lexer() -> impl Parser<char, Vec<(Token, Span)>, Error = Simple<char>> {
         .then_ignore(just('"'))
         .collect::<String>()
         .map(Token::Text);
+
+    // parser for delimeter
+    let delimeter = newline();
 
     let token = index
         .or(timespan)
