@@ -70,11 +70,12 @@ fn lexer() -> impl Parser<char, Vec<(Token, Span)>, Error = Simple<char>> {
         .map(Token::Text);
 
     // parser for delimeter
-    let delimeter = newline();
+    let delimeter = newline().repeated().at_least(2).map(Token::Delimeter);
 
     let token = index
         .or(timespan)
         .or(text_)
+        .or(delimeter)
         .recover_with(skip_then_retry_until([]));
 
     token
