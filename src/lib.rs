@@ -25,6 +25,7 @@ pub enum Token {
     Timecode(Timecode),
     Text(String),
     Delimeter,
+    Card(String),
 }
 
 impl fmt::Display for Timecode {
@@ -45,38 +46,44 @@ impl fmt::Display for Token {
             Token::Timecode(t) => write!(f, "{}", t),
             Token::Text(s) => write!(f, "{}", s),
             Token::Delimeter => write!(f, "\n"),
+            Token::Card(s) => write!(f, "{}", s),
         }
     }
 }
 
-fn lexer() -> impl Parser<char, Vec<(Token, Span)>, Error = Simple<char>> {
+fn parser() -> impl Parser<char, Vec<(Token, Span)>, Error = Simple<char>> {
+    let card = ;
+
+    let token = card
+        .recover_with(skip_then_retry_until([]));;
+
     // A parser for indexes
-    let index = text::int(10)
-        .chain::<char, _, _>(just(',').chain(text::digits(10)).or_not().flatten())
-        .collect::<String>()
-        .map(Token::Index);
+    // let index = text::int(10)
+    //     .chain::<char, _, _>(just(',').chain(text::digits(10)).or_not().flatten())
+    //     .collect::<String>()
+    //     .map(Token::Index);
 
-    // A parser for timespans
-    // let timespan = ;
+    // // A parser for timespans
+    // // let timespan = ;
 
-    // parser for timecodes
-    // let timecode = ;
+    // // parser for timecodes
+    // // let timecode = ;
 
-    // parser for text
-    let text_ = just('"')
-        .ignore_then(filter(|c| *c != '"').repeated())
-        .then_ignore(just('"'))
-        .collect::<String>()
-        .map(Token::Text);
+    // // parser for text
+    // let text_ = just('"')
+    //     .ignore_then(filter(|c| *c != '"').repeated())
+    //     .then_ignore(just('"'))
+    //     .collect::<String>()
+    //     .map(Token::Text);
 
-    // parser for delimeter
-    let delimeter = newline().repeated().at_least(2).map(Token::Delimeter);
+    // // parser for delimeter
+    // let delimeter = newline().repeated()
 
-    let token = index
-        .or(timespan)
-        .or(text_)
-        .or(delimeter)
-        .recover_with(skip_then_retry_until([]));
+    // let token = index
+    //     .or(timespan)
+    //     .or(text_)
+    //     .or(delimeter)
+    //     .recover_with(skip_then_retry_until([]));
 
     token
         .map_with_span(|tok, span| (tok, span))

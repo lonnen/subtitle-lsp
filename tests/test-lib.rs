@@ -1,6 +1,6 @@
-use subtitle_lsp;
+use subtitle_lsp::*;
 
 #[test]
-fn test_something() {
-    assert_eq!(1, 1);
+fn test_lex() {
+    assert_eq!(lexer().parse_recovery(), ());
 }
