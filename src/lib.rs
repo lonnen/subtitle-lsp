@@ -1,6 +1,6 @@
 use core::fmt;
 
-use chumsky::{prelude::*};
+use chumsky::{prelude::*, text::newline};
 
 pub type Span = std::ops::Range<usize>;
 
@@ -52,16 +52,15 @@ impl fmt::Display for Token {
 }
 
 fn parser() -> impl Parser<char, Vec<(Token, Span)>, Error = Simple<char>> {
-    
-    let delimeter = text::newline()
-        .then(text::newline())
-        .map(|_| Token::Delimeter);
+    // let delimeter = text::newline()
+    //     .then(text::newline())
+    //     .map(|_| Token::Delimeter);
 
-    // A parser for indexes
-    let index = text::int(10)
-        .chain::<char, _, _>(just(',').chain(text::digits(10)).or_not().flatten())
-        .collect::<String>()
-        .map(Token::Index);
+    // // A parser for indexes
+    // let index = text::int(10)
+    //     .chain::<char, _, _>(just(',').chain(text::digits(10)).or_not().flatten())
+    //     .collect::<String>()
+    //     .map(Token::Index);
 
     // // A parser for timespans
     // // let timespan = ;
@@ -85,9 +84,13 @@ fn parser() -> impl Parser<char, Vec<(Token, Span)>, Error = Simple<char>> {
     //     .or(delimeter)
     //     .recover_with(skip_then_retry_until([]));
 
-    let token = delimeter
-        .or(index)
-        .recover_with(skip_then_retry_until([]));
+    // let token = delimeter
+    //     .or(index)
+    //     .recover_with(skip_then_retry_until([]));
+
+    let token = any().repeated().then_ignore(newline()).collect::<String>().map(|characters: String| match characters.as_str() {
+        _ => Token::Text(characters),
+    });
 
     token
         .map_with_span(|tok, span| (tok, span))
