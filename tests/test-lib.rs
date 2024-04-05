@@ -1,4 +1,4 @@
-use subtitle_lsp::*;
+use subtitle_lsp;
 
 #[test]
 fn test_lex() {
