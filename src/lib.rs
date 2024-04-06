@@ -51,7 +51,7 @@ impl fmt::Display for Token {
     }
 }
 
-fn parser() -> impl Parser<char, Vec<(Token, Span)>, Error = Simple<char>> {
+pub fn parser() -> impl Parser<char, Vec<(Token, Span)>, Error = Simple<char>> {
     // let delimeter = text::newline()
     //     .then(text::newline())
     //     .map(|_| Token::Delimeter);
