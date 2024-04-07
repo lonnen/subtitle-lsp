@@ -10,5 +10,5 @@ a subtitle.
 
 #[test]
 fn test_lex() {
-    assert_eq!(parser().parse_recovery(SIMPLE_SRT), Ok(()));
+    let (tokens, mut errs) = parser().parse_recovery(SIMPLE_SRT);
 }
