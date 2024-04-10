@@ -48,7 +48,7 @@ impl LanguageServer for Backend {
 }
 
 impl Backend {
-    async fn on_change(&self, params: TextDocumentItem) {
+    async fn on_change(&self, _params: TextDocumentItem) {
         // make a rope from &params.text
         // stick it into the document_map
         // attempt to parse &params.text
