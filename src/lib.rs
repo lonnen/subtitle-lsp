@@ -18,11 +18,11 @@ pub struct Timecode {
     milliseconds: u16,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum Token {
     Index(String),
-    Timespan(Timespan),
-    Timecode(Timecode),
+    // Timespan(Timespan),
+    // Timecode(Timecode),
     Text(String),
     Delimeter,
     Card(String),
@@ -42,8 +42,8 @@ impl fmt::Display for Token {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
             Token::Index(i) => write!(f, "{}", i),
-            Token::Timespan(t) => write!(f, "{} --> {}", t.start, t.end),
-            Token::Timecode(t) => write!(f, "{}", t),
+            // Token::Timespan(t) => write!(f, "{} --> {}", t.start, t.end),
+            // Token::Timecode(t) => write!(f, "{}", t),
             Token::Text(s) => write!(f, "{}", s),
             Token::Delimeter => write!(f, "\n"),
             Token::Card(s) => write!(f, "{}", s),
