@@ -88,9 +88,13 @@ pub fn parser() -> impl Parser<char, Vec<(Token, Span)>, Error = Simple<char>> {
     //     .or(index)
     //     .recover_with(skip_then_retry_until([]));
 
-    let token = any().repeated().then_ignore(newline()).collect::<String>().map(|characters: String| match characters.as_str() {
-        _ => Token::Text(characters),
-    });
+    let token = any()
+        .repeated()
+        .then_ignore(newline())
+        .collect::<String>()
+        .map(|characters: String| match characters.as_str() {
+            _ => Token::Text(characters),
+        });
 
     token
         .map_with_span(|tok, span| (tok, span))
