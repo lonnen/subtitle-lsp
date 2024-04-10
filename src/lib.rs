@@ -4,13 +4,13 @@ use chumsky::{prelude::*, text::newline};
 
 pub type Span = std::ops::Range<usize>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct Timespan {
     start: Timecode,
     end: Timecode,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct Timecode {
     hours: u8,
     minutes: u8,
@@ -21,8 +21,8 @@ pub struct Timecode {
 #[derive(Debug, PartialEq)]
 pub enum Token {
     Index(String),
-    // Timespan(Timespan),
-    // Timecode(Timecode),
+    Timespan(Timespan),
+    Timecode(Timecode),
     Text(String),
     Delimeter,
     Card(String),
@@ -42,8 +42,8 @@ impl fmt::Display for Token {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
             Token::Index(i) => write!(f, "{}", i),
-            // Token::Timespan(t) => write!(f, "{} --> {}", t.start, t.end),
-            // Token::Timecode(t) => write!(f, "{}", t),
+            Token::Timespan(t) => write!(f, "{} --> {}", t.start, t.end),
+            Token::Timecode(t) => write!(f, "{}", t),
             Token::Text(s) => write!(f, "{}", s),
             Token::Delimeter => write!(f, "\n"),
             Token::Card(s) => write!(f, "{}", s),
@@ -98,6 +98,6 @@ pub fn parser() -> impl Parser<char, Vec<(Token, Span)>, Error = Simple<char>> {
 
     token
         .map_with_span(|tok, span| (tok, span))
-        .padded()
+        //.padded()
         .repeated()
 }
