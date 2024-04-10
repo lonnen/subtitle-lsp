@@ -10,5 +10,8 @@ a subtitle.
 
 #[test]
 fn test_lex() {
-    let (tokens, mut errs) = parser().parse_recovery(SIMPLE_SRT);
+    let (tokens, _) = parser().parse_recovery(SIMPLE_SRT);
+    for (token, _) in tokens.unwrap() {
+        assert_eq!(token, Token::Text("".to_string()));
+    }
 }
