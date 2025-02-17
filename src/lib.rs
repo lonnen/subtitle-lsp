@@ -1,3 +1,5 @@
+mod capabilities;
+
 use core::fmt;
 
 use chumsky::{prelude::*, text::newline};
@@ -7,6 +9,7 @@ use tower_lsp::{
     Client, LanguageServer};
 
 pub type Span = std::ops::Range<usize>;
+
 
 #[derive(Debug)]
 pub struct Backend {
@@ -114,16 +117,16 @@ pub fn parser() -> impl Parser<char, Vec<(Token, Span)>, Error = Simple<char>> {
 #[tower_lsp::async_trait]
 impl LanguageServer for Backend {
     async fn initialize(&self, _: InitializeParams) -> Result<InitializeResult> {
+        let capabilities = capabilities::server_capabilities(&params.capabilities);
+
         Ok(InitializeResult {
+            capabilities,
             server_info: Some(ServerInfo {
                 name: option_env!("CARGO_PKG_NAME")
                     .unwrap_or("subtitle-lsp")
                     .to_string(),
                 version: Some(option_env!("CARGO_PKG_VERSION").unwrap_or("").to_string()),
             }),
-            capabilities: ServerCapabilities {
-                ..ServerCapabilities::default()
-            },
         })
     }
 
@@ -152,6 +155,13 @@ impl LanguageServer for Backend {
 }
 
 impl Backend {
+
+    pub fn new(client: Client) -> Self {
+        Self {
+            client
+        }
+    }
+
     async fn on_change(&self, _params: TextDocumentItem) {
         // make a rope from &params.text
         // stick it into the document_map
