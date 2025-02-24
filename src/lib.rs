@@ -3,6 +3,7 @@ mod capabilities;
 use core::fmt;
 
 use chumsky::{prelude::*, text::newline};
+use serde_json::Value;
 use tower_lsp::{
     jsonrpc::Result,
     lsp_types::*, 
