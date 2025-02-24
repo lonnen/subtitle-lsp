@@ -218,6 +218,12 @@ struct TextDocumentItem {
 
 impl Backend {
 
+    pub fn new(client: Client) -> Self {
+        Self {
+            client
+        }
+    }
+
     async fn on_change(&self, _params: TextDocumentItem) {
         self.client
             .log_message(MessageType::INFO, "backend: on change!")
