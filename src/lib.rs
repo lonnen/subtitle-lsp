@@ -147,8 +147,7 @@ impl LanguageServer for Backend {
         self.on_change(TextDocumentItem {
             uri: params.text_document.uri,
             text: params.text_document.text,
-            version: params.text_document.version,
-            language_id: params.text_document.language_id,
+            version: Some(params.text_document.version),
         })
         .await
     }
@@ -159,9 +158,8 @@ impl LanguageServer for Backend {
             .await;
         self.on_change(TextDocumentItem {
             uri: params.text_document.uri,
-            text: params.text_document.text,
-            version: params.text_document.version,
-            language_id: params.text_document.language_id,
+            text: params.content_changes[0].text.clone(),
+            version: None,
         })
         .await
     }
@@ -170,9 +168,8 @@ impl LanguageServer for Backend {
         if let Some(text) = params.text {
             let item = TextDocumentItem {
                 uri: params.text_document.uri,
-                text: &text,
+                text: text,
                 version: None,
-                language_id: None,
             };
             self.on_change(item).await;
             _ = self.client.semantic_tokens_refresh().await;
