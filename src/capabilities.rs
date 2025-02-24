@@ -1,6 +1,6 @@
 use tower_lsp::lsp_types::*;
 
-pub fn server_capabilities(client_capabilities: &ClientCapabilities) -> ServerCapabilities {
+pub fn server_capabilities(_client_capabilities: &ClientCapabilities) -> ServerCapabilities {
     ServerCapabilities {
         // text_document_sync: Some(TextDocumentSyncCapability::Options(
         //     TextDocumentSyncOptions {
