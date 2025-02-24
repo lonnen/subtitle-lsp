@@ -210,6 +210,12 @@ impl LanguageServer for Backend {
     }
 }
 
+struct TextDocumentItem {
+    uri: Url,
+    text: String,
+    version: i32,
+}
+
 impl Backend {
 
     async fn on_change(&self, _params: TextDocumentItem) {
