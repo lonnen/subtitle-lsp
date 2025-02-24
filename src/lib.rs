@@ -213,7 +213,7 @@ impl LanguageServer for Backend {
 struct TextDocumentItem {
     uri: Url,
     text: String,
-    version: i32,
+    version: Option<i32>,
 }
 
 impl Backend {
