@@ -166,9 +166,15 @@ impl LanguageServer for Backend {
         .await
     }
 
-    async fn did_change_watched_files(&self, _: DidChangeWatchedFilesParams) {
+    async fn did_save(&self, _: DidSaveTextDocumentParams) {
         self.client
-            .log_message(MessageType::INFO, "watched files have changed!")
+            .log_message(MessageType::INFO, "file saved!")
+            .await;
+    }
+
+    async fn did_close(&self, _: DidCloseTextDocumentParams) {
+        self.client
+            .log_message(MessageType::INFO, "file closed!")
             .await;
     }
 
@@ -184,24 +190,6 @@ impl LanguageServer for Backend {
         }
 
         Ok(None)
-    }
-
-    async fn did_change(&self, _: DidChangeTextDocumentParams) {
-        self.client
-            .log_message(MessageType::INFO, "file changed!")
-            .await;
-    }
-
-    async fn did_save(&self, _: DidSaveTextDocumentParams) {
-        self.client
-            .log_message(MessageType::INFO, "file saved!")
-            .await;
-    }
-
-    async fn did_close(&self, _: DidCloseTextDocumentParams) {
-        self.client
-            .log_message(MessageType::INFO, "file closed!")
-            .await;
     }
 
     async fn completion(&self, _: CompletionParams) -> Result<Option<CompletionResponse>> {
