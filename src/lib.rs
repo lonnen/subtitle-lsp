@@ -212,12 +212,6 @@ impl LanguageServer for Backend {
 
 impl Backend {
 
-    pub fn new(client: Client) -> Self {
-        Self {
-            client
-        }
-    }
-
     async fn on_change(&self, _params: TextDocumentItem) {
         // make a rope from &params.text
         // stick it into the document_map
