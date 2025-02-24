@@ -166,7 +166,17 @@ impl LanguageServer for Backend {
         .await
     }
 
-    async fn did_save(&self, _: DidSaveTextDocumentParams) {
+    async fn did_save(&self, params: DidSaveTextDocumentParams) {
+        if let Some(text) = params.text {
+            let item = TextDocumentItem {
+                uri: params.text_document.uri,
+                text: &text,
+                version: None,
+                language_id: None,
+            };
+            self.on_change(item).await;
+            _ = self.client.semantic_tokens_refresh().await;
+        }
         self.client
             .log_message(MessageType::INFO, "file saved!")
             .await;
