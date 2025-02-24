@@ -213,6 +213,10 @@ impl LanguageServer for Backend {
 impl Backend {
 
     async fn on_change(&self, _params: TextDocumentItem) {
+        self.client
+            .log_message(MessageType::INFO, "backend: on change!")
+            .await;
+        
         // make a rope from &params.text
         // stick it into the document_map
         // attempt to parse &params.text
