@@ -13,10 +13,10 @@ pub struct Timespan {
 
 #[derive(Debug, PartialEq)]
 pub struct Timecode {
-    hours: u8,
-    minutes: u8,
-    seconds: u8,
-    milliseconds: u16,
+    hours: u32,
+    minutes: u32,
+    seconds: u32,
+    milliseconds: u32,
 }
 
 #[derive(Debug, PartialEq)]
@@ -68,7 +68,7 @@ pub fn parser() -> impl Parser<char, Vec<(Token, Span)>, Error = Simple<char>> {
     // let timespan = ;
 
     // parser for timecodes
-    // let timecode = ;
+    let timecode = ;
 
     // parser for text
     let text_ = just('"')
