@@ -68,7 +68,19 @@ pub fn parser() -> impl Parser<char, Vec<(Token, Span)>, Error = Simple<char>> {
     // let timespan = ;
 
     // parser for timecodes
-    let timecode = ;
+    let timecode = text::int(10)
+        .then_ignore(just(':'))
+        .then(text::int(10))
+        .then_ignore(just(':'))
+        .then(text::int(10))
+        .then_ignore(just(','))
+        .then(text::int(10))
+        .map(|(((hours, minutes), seconds), milliseconds_)| Timecode {
+            hours,
+            minutes,
+            seconds,
+            milliseconds
+        });
 
     // parser for text
     let text_ = just('"')
