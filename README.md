@@ -1,5 +1,7 @@
 # subtitle-lsp
 
+warning: subtitle-lsp is very early in development and does not work as intended (when it works at all)
+
 subtitle-lsp is a [language server](https://microsoft.github.io/language-server-protocol/) for subtitle files.
 
 Currently supported formats:
