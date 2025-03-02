@@ -65,14 +65,18 @@ pub fn parser() -> impl Parser<char, Vec<(Token, Span)>, Error = Simple<char>> {
     // A parser for timespans
     // let timespan = ;
 
+    // helper parser for the integer portion of timecodes
+    let timecode_int = text::int(10)
+        .map(|s: String| s.parse::<u32>().unwrap());
+
     // parser for timecodes
-    let timecode = text::int(10)
+    let timecode = timecode_int
         .then_ignore(just(':'))
-        .then(text::int(10))
+        .then(timecode_int)
         .then_ignore(just(':'))
-        .then(text::int(10))
+        .then(timecode_int)
         .then_ignore(just(','))
-        .then(text::int(10))
+        .then(timecode_int)
         .map(|(((hours, minutes), seconds), milliseconds)| Timecode {
             hours,
             minutes,
