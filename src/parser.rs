@@ -4,7 +4,6 @@ use core::fmt;
 
 pub type Span = std::ops::Range<usize>;
 
-
 #[derive(Debug, PartialEq)]
 pub struct Timespan {
     start: Timecode,
@@ -28,7 +27,6 @@ pub enum Token {
     Delimeter,
     Card(String),
 }
-
 
 impl fmt::Display for Timecode {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
@@ -75,11 +73,11 @@ pub fn parser() -> impl Parser<char, Vec<(Token, Span)>, Error = Simple<char>> {
         .then(text::int(10))
         .then_ignore(just(','))
         .then(text::int(10))
-        .map(|(((hours, minutes), seconds), milliseconds_)| Timecode {
+        .map(|(((hours, minutes), seconds), milliseconds)| Timecode {
             hours,
             minutes,
             seconds,
-            milliseconds
+            milliseconds,
         });
 
     // parser for text
@@ -98,9 +96,7 @@ pub fn parser() -> impl Parser<char, Vec<(Token, Span)>, Error = Simple<char>> {
         .or(delimeter)
         .recover_with(skip_then_retry_until([]));
 
-    let token = delimeter
-        .or(index)
-        .recover_with(skip_then_retry_until([]));
+    let token = delimeter.or(index).recover_with(skip_then_retry_until([]));
 
     let token = any()
         .repeated()
