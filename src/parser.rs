@@ -22,7 +22,6 @@ pub struct Timecode {
 pub enum Token {
     Index(String),
     Timespan(Timespan),
-    Timecode(Timecode),
     Text(String),
     Delimeter,
     Card(String),
@@ -43,7 +42,6 @@ impl fmt::Display for Token {
         match self {
             Token::Index(i) => write!(f, "{}", i),
             Token::Timespan(t) => write!(f, "{} --> {}", t.start, t.end),
-            Token::Timecode(t) => write!(f, "{}", t),
             Token::Text(s) => write!(f, "{}", s),
             Token::Delimeter => write!(f, "\n"),
             Token::Card(s) => write!(f, "{}", s),
@@ -83,7 +81,7 @@ pub fn parser() -> impl Parser<char, Vec<(Token, Span)>, Error = Simple<char>> {
     let timespan = timecode
         .then_ignore(just("-->").padded())
         .then(timecode)
-        .map(|(start, end)| Timespan { start, end });
+        .map(|(start, end)| Token::Timespan(Timespan { start, end }));
 
     // parser for text
     let text_ = just('"')
