@@ -52,9 +52,8 @@ impl fmt::Display for Token {
 }
 
 pub fn parser() -> impl Parser<char, Vec<(Token, Span)>, Error = Simple<char>> {
-    let delimeter = text::newline()
-        .then(text::newline())
-        .map(|_| Token::Delimeter);
+    // delimeter
+    let delimeter = newline().repeated().map(|_| return Token::Delimeter);
 
     // A parser for indexes
     let index = text::int(10)
@@ -92,9 +91,6 @@ pub fn parser() -> impl Parser<char, Vec<(Token, Span)>, Error = Simple<char>> {
         .then_ignore(just('"'))
         .collect::<String>()
         .map(Token::Text);
-
-    // parser for delimeter
-    let delimeter = newline().repeated();
 
     let token = index
         .or(timespan)
