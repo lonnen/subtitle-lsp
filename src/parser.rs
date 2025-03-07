@@ -20,7 +20,7 @@ pub struct Timecode {
 
 #[derive(Debug, PartialEq)]
 pub enum Token {
-    Index(String),
+    Index(u32),
     Timespan(Timespan),
     Text(String),
     Delimeter,
@@ -50,26 +50,25 @@ impl fmt::Display for Token {
 }
 
 pub fn parser() -> impl Parser<char, Vec<(Token, Span)>, Error = Simple<char>> {
+    // helper parser for the integer portion of timecodes
+    let unpadded_int = text::int(10).map(|s: String| s.parse::<u32>().unwrap());
+
     // delimeter
     let delimeter = newline().repeated().map(|_| return Token::Delimeter);
 
     // A parser for indexes
-    let index = text::int(10)
-        .chain::<char, _, _>(just(',').chain(text::digits(10)).or_not().flatten())
-        .collect::<String>()
-        .map(Token::Index);
-
-    // helper parser for the integer portion of timecodes
-    let timecode_int = text::int(10).map(|s: String| s.parse::<u32>().unwrap());
+    let index = unpadded_int
+        .then_ignore(just("\n"))
+        .map(|id| Token::Index(id));
 
     // parser for timecodes
-    let timecode = timecode_int
+    let timecode = unpadded_int
         .then_ignore(just(':'))
-        .then(timecode_int)
+        .then(unpadded_int)
         .then_ignore(just(':'))
-        .then(timecode_int)
+        .then(unpadded_int)
         .then_ignore(just(','))
-        .then(timecode_int)
+        .then(unpadded_int)
         .map(|(((hours, minutes), seconds), milliseconds)| Timecode {
             hours,
             minutes,
