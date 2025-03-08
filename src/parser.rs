@@ -10,21 +10,22 @@ pub struct Timespan {
     end: Timecode,
 }
 
+impl fmt::Display for Timespan {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(
+            f,
+            "{} --> {}",
+            self.start, self.end
+        )
+    }
+}
+
 #[derive(Debug, PartialEq)]
 pub struct Timecode {
     hours: u32,
     minutes: u32,
     seconds: u32,
     milliseconds: u32,
-}
-
-#[derive(Debug, PartialEq)]
-pub enum Token {
-    Index(u32),
-    Timespan(Timespan),
-    Text(String),
-    Delimeter,
-    Card(String),
 }
 
 impl fmt::Display for Timecode {
@@ -35,6 +36,32 @@ impl fmt::Display for Timecode {
             self.hours, self.minutes, self.seconds, self.milliseconds
         )
     }
+}
+
+#[derive(Debug, PartialEq)]
+pub struct Card {
+    index: u32,
+    timespan: Timespan,
+    text: String
+}
+
+impl fmt::Display for Card {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(
+            f,
+            "{}\n{}\n{}\n\n",
+            self.index, self.timespan, self.text
+        )
+    }
+}
+
+#[derive(Debug, PartialEq)]
+pub enum Token {
+    Index(u32),
+    Timespan(Timespan),
+    Text(String),
+    Delimeter,
+    Card(String),
 }
 
 impl fmt::Display for Token {
