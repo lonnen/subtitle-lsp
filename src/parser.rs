@@ -12,11 +12,7 @@ pub struct Timespan {
 
 impl fmt::Display for Timespan {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(
-            f,
-            "{} --> {}",
-            self.start, self.end
-        )
+        write!(f, "{} --> {}", self.start, self.end)
     }
 }
 
@@ -42,16 +38,12 @@ impl fmt::Display for Timecode {
 pub struct Card {
     index: u32,
     timespan: Timespan,
-    text: String
+    text: String,
 }
 
 impl fmt::Display for Card {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(
-            f,
-            "{}\n{}\n{}\n\n",
-            self.index, self.timespan, self.text
-        )
+        write!(f, "{}\n{}\n{}\n\n", self.index, self.timespan, self.text)
     }
 }
 
