@@ -53,7 +53,7 @@ pub enum Token {
     Timespan(Timespan),
     Text(String),
     Delimeter,
-    Card(String),
+    Card(Card),
 }
 
 impl fmt::Display for Token {
@@ -68,12 +68,9 @@ impl fmt::Display for Token {
     }
 }
 
-pub fn parser() -> impl Parser<char, Vec<(Token, Span)>, Error = Simple<char>> {
+pub fn parser() -> impl Parser<char, Vec<Card>, Error = Simple<char>> {
     // helper parser for the integer portion of timecodes
     let unpadded_int = text::int(10).map(|s: String| s.parse::<u32>().unwrap());
-
-    // delimeter
-    let delimeter = newline().repeated().map(|_| return Token::Delimeter);
 
     // A parser for indexes
     let index = unpadded_int
@@ -108,15 +105,16 @@ pub fn parser() -> impl Parser<char, Vec<(Token, Span)>, Error = Simple<char>> {
         .collect::<String>()
         .map(Token::Text);
 
-    let token = index
-        .or(timespan)
-        .or(text_)
-        .or(delimeter)
-        .recover_with(skip_then_retry_until([]));
+    // delimeter
+    let delimeter = choice((
+        newline()
+            .repeated()
+            .exactly(2)
+            .map(|_| return Token::Delimeter),
+        end().map(|_| return Token::Delimeter),
+    ));
 
-    token
-        .map_with_span(|tok, span| (tok, span))
-        .recover_with(skip_then_retry_until([]))
-        .repeated()
-        .collect()
+    let card = index.then(timespan).then(text_).then(delimeter);
+
+    card.repeated()
 }
