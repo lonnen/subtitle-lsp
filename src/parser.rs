@@ -35,25 +35,11 @@ impl fmt::Display for Timecode {
 }
 
 #[derive(Debug, PartialEq)]
-pub struct Card {
-    index: u32,
-    timespan: Timespan,
-    text: String,
-}
-
-impl fmt::Display for Card {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}\n{}\n{}\n\n", self.index, self.timespan, self.text)
-    }
-}
-
-#[derive(Debug, PartialEq)]
 pub enum Token {
     Index(u32),
     Timespan(Timespan),
     Text(String),
     Delimeter,
-    Card(Card),
 }
 
 impl fmt::Display for Token {
@@ -63,12 +49,11 @@ impl fmt::Display for Token {
             Token::Timespan(t) => write!(f, "{} --> {}", t.start, t.end),
             Token::Text(s) => write!(f, "{}", s),
             Token::Delimeter => write!(f, "\n"),
-            Token::Card(s) => write!(f, "{}", s),
         }
     }
 }
 
-pub fn parser() -> impl Parser<char, Vec<Card>, Error = Simple<char>> {
+pub fn parser() -> impl Parser<char, Vec<Token>, Error = Simple<char>> {
     // helper parser for the integer portion of timecodes
     let unpadded_int = text::int(10).map(|s: String| s.parse::<u32>().unwrap());
 
@@ -103,7 +88,7 @@ pub fn parser() -> impl Parser<char, Vec<Card>, Error = Simple<char>> {
         .ignore_then(filter(|c| *c != '"').repeated())
         .then_ignore(just('"'))
         .collect::<String>()
-        .map(Token::Text);
+        .map(|text_| Token::Text(text_));
 
     // delimeter
     let delimeter = choice((
@@ -114,7 +99,13 @@ pub fn parser() -> impl Parser<char, Vec<Card>, Error = Simple<char>> {
         end().map(|_| return Token::Delimeter),
     ));
 
-    let card = index.then(timespan).then(text_).then(delimeter);
+    // A token can be one of the following
+    let token = choice((index, timespan, text_, delimeter)).repeated();
 
-    card.repeated()
+    token
+        .recover_with(skip_then_retry_until([]))
+        .repeated()
+        .then(end())
+}
+
 }
