@@ -108,4 +108,40 @@ pub fn parser() -> impl Parser<char, Vec<Token>, Error = Simple<char>> {
         .then(end())
 }
 
+#[cfg(test)]
+mod parser_tests {
+    use super::*;
+
+    #[test]
+    fn test_parse() {
+        const SIMPLE_SRT: &str = "
+        1
+        00:05:00,400 --> 00:05:15,300
+        This is an example of
+        a subtitle.
+
+        ";
+
+        let expected = vec![
+            Token::Index(32),
+            Token::Timespan(Timespan {
+                start: Timecode {
+                    hours: 0,
+                    minutes: 5,
+                    seconds: 0,
+                    milliseconds: 400,
+                },
+                end: Timecode {
+                    hours: 0,
+                    minutes: 5,
+                    seconds: 0,
+                    milliseconds: 400,
+                },
+            }),
+            Token::Text("This is an example of\na subtitle.".to_string()),
+            Token::Delimeter,
+        ];
+        let result = parser().parse(SIMPLE_SRT).unwrap();
+        assert_eq!(expected, result);
+    }
 }
