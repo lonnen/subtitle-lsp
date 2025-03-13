@@ -53,7 +53,7 @@ impl fmt::Display for Token {
     }
 }
 
-pub fn parser() -> impl Parser<char, Vec<Token>, Error = Simple<char>> {
+pub fn parser() -> impl Parser<char, Vec<(Token, Span)>, Error = Simple<char>> {
     // helper parser for the integer portion of timecodes
     let unpadded_int = text::int(10).map(|s: String| s.parse::<u32>().unwrap());
 
@@ -100,12 +100,11 @@ pub fn parser() -> impl Parser<char, Vec<Token>, Error = Simple<char>> {
     ));
 
     // A token can be one of the following
-    let token = choice((index, timespan, text_, delimeter)).repeated();
-
-    token
+    choice((index, timespan, text_, delimeter))
         .recover_with(skip_then_retry_until([]))
+        .map_with_span(|t, span| (t, span))
         .repeated()
-        .then(end())
+        .then_ignore(end())
 }
 
 #[cfg(test)]
