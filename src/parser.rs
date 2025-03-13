@@ -140,7 +140,11 @@ mod parser_tests {
             Token::Text("This is an example of\na subtitle.".to_string()),
             Token::Delimeter,
         ];
+
         let result = parser().parse(SIMPLE_SRT).unwrap();
-        assert_eq!(expected, result);
+        
+        assert!(expected.iter()
+            .zip(result.iter())
+            .all(|(e, r)| *e == r.0));
     }
 }
