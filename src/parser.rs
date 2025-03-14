@@ -77,30 +77,27 @@ pub fn parser() -> impl Parser<char, Vec<(Token, Span)>, Error = Simple<char>> {
             milliseconds,
         });
 
-    // A parser for timespans
+    // a parser for timespans
     let timespan = timecode
         .then_ignore(just("-->").padded())
         .then(timecode)
         .map(|(start, end)| Token::Timespan(Timespan { start, end }));
-
+    
     // parser for text
-    let text_ = just('"')
-        .ignore_then(filter(|c| *c != '"').repeated())
-        .then_ignore(just('"'))
-        .collect::<String>()
-        .map(|text_| Token::Text(text_));
-
-    // delimeter
-    let delimeter = choice((
-        newline()
-            .repeated()
-            .exactly(2)
-            .to(Token::Delimeter),
-        end().to(Token::Delimeter),
-    ));
+    let text_ = take_until(newline().rewind().or(end()))
+        .map(|(text_, _)| text_)
+        .collect()
+        .map(|t: String| if t.is_empty() {
+            Token::Delimeter
+        } else {
+            Token::Text(t)
+        });
 
     // A token can be one of the following
-    choice((index, timespan, text_, delimeter))
+    timespan
+        .or(index)
+        .or(text_)
+        .then_ignore(newline())
         .recover_with(skip_then_retry_until([]))
         .map_with_span(|t, span| (t, span))
         .repeated()
@@ -142,9 +139,7 @@ mod parser_tests {
         ];
 
         let result = parser().parse(SIMPLE_SRT).unwrap();
-        
-        assert!(expected.iter()
-            .zip(result.iter())
-            .all(|(e, r)| *e == r.0));
+
+        assert!(expected.iter().zip(result.iter()).all(|(e, r)| *e == r.0));
     }
 }
