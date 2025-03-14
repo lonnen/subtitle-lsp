@@ -4,7 +4,7 @@ use core::fmt;
 
 pub type Span = std::ops::Range<usize>;
 
-#[derive(Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct Timespan {
     start: Timecode,
     end: Timecode,
@@ -16,7 +16,7 @@ impl fmt::Display for Timespan {
     }
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct Timecode {
     hours: u32,
     minutes: u32,
@@ -34,7 +34,7 @@ impl fmt::Display for Timecode {
     }
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum Token {
     Index(u32),
     Timespan(Timespan),
@@ -95,8 +95,8 @@ pub fn parser() -> impl Parser<char, Vec<(Token, Span)>, Error = Simple<char>> {
         newline()
             .repeated()
             .exactly(2)
-            .map(|_| return Token::Delimeter),
-        end().map(|_| return Token::Delimeter),
+            .to(Token::Delimeter),
+        end().to(Token::Delimeter),
     ));
 
     // A token can be one of the following
