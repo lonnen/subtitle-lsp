@@ -59,7 +59,7 @@ pub fn parser() -> impl Parser<char, Vec<(Token, Span)>, Error = Simple<char>> {
 
     // A parser for indexes
     let index = unpadded_int
-        .then_ignore(just("\n"))
+        .then_ignore(newline())
         .map(|id| Token::Index(id));
 
     // parser for timecodes
