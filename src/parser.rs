@@ -82,15 +82,17 @@ pub fn parser() -> impl Parser<char, Vec<(Token, Span)>, Error = Simple<char>> {
         .then_ignore(just("-->").padded())
         .then(timecode)
         .map(|(start, end)| Token::Timespan(Timespan { start, end }));
-    
+
     // parser for text
     let text_ = take_until(newline().rewind().or(end()))
         .map(|(text_, _)| text_)
         .collect()
-        .map(|t: String| if t.is_empty() {
-            Token::Delimeter
-        } else {
-            Token::Text(t)
+        .map(|t: String| {
+            if t.is_empty() {
+                Token::Delimeter
+            } else {
+                Token::Text(t)
+            }
         });
 
     // A token can be one of the following
