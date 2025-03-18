@@ -58,9 +58,7 @@ pub fn parser() -> impl Parser<char, Vec<(Token, Span)>, Error = Simple<char>> {
     let unpadded_int = text::int(10).map(|s: String| s.parse::<u32>().unwrap());
 
     // A parser for indexes
-    let index = unpadded_int
-        .then_ignore(newline())
-        .map(|id| Token::Index(id));
+    let index = unpadded_int.map(|id| Token::Index(id));
 
     // parser for timecodes
     let timecode = unpadded_int
@@ -84,7 +82,7 @@ pub fn parser() -> impl Parser<char, Vec<(Token, Span)>, Error = Simple<char>> {
         .map(|(start, end)| Token::Timespan(Timespan { start, end }));
 
     // parser for text
-    let text_ = take_until(newline().rewind().or(end()))
+    let text_ = take_until(newline().or(end()).rewind())
         .map(|(text_, _)| text_)
         .collect()
         .map(|t: String| {
@@ -95,20 +93,26 @@ pub fn parser() -> impl Parser<char, Vec<(Token, Span)>, Error = Simple<char>> {
             }
         });
 
-    // A token can be one of the following
     timespan
         .or(index)
         .or(text_)
-        .then_ignore(newline())
-        .recover_with(skip_then_retry_until([]))
         .map_with_span(|t, span| (t, span))
-        .repeated()
-        .then_ignore(end())
+        .separated_by(newline())
 }
 
 #[cfg(test)]
 mod parser_tests {
     use super::*;
+
+    #[test]
+    fn test_index() {
+        const SIMPLE_SRT: &str = "1";
+        let expected = vec![Token::Index(1)];
+        let result = parser().parse(SIMPLE_SRT).unwrap();
+        for (e, r) in expected.iter().zip(result.iter()) {
+            assert_eq!(*e, r.0)
+        }
+    }
 
     #[test]
     fn test_parse() {
