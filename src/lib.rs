@@ -105,11 +105,12 @@ impl LanguageServer for Backend {
     }
 }
 
-// struct TextDocumentItem {
-//     uri: Url,
-//     text: String,
-//     version: Option<i32>,
-// }
+#[allow(dead_code)]
+struct TextDocumentItem {
+    uri: Url,
+    text: String,
+    version: Option<i32>,
+}
 
 impl Backend {
 
