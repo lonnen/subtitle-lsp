@@ -105,11 +105,11 @@ impl LanguageServer for Backend {
     }
 }
 
-struct TextDocumentItem {
-    uri: Url,
-    text: String,
-    version: Option<i32>,
-}
+// struct TextDocumentItem {
+//     uri: Url,
+//     text: String,
+//     version: Option<i32>,
+// }
 
 impl Backend {
 
